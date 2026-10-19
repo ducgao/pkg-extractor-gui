@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PKG Extractor GUI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>PKG Extractor</h1>
+    <p>Giải nén game gốc, update và patch/DLC thành thư mục game cho shadPS4.</p>
+  </header>
+
+  <section class="card" id="files">
+    <h2>1. Chọn file PKG</h2>
+    <div class="slot" data-slot="base">
+      <div class="slot-head"><span class="slot-name">Game gốc</span><span class="badge" data-badge></span></div>
+      <div class="slot-body">
+        <button class="pick" data-pick>Chọn file…</button>
+        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
+        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+      </div>
+    </div>
+    <div class="slot" data-slot="update">
+      <div class="slot-head"><span class="slot-name">Update</span><span class="badge" data-badge></span></div>
+      <div class="slot-body">
+        <button class="pick" data-pick>Chọn file…</button>
+        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
+        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+      </div>
+    </div>
+    <div class="slot" data-slot="extra">
+      <div class="slot-head"><span class="slot-name">Patch / DLC</span><span class="badge" data-badge></span></div>
+      <div class="slot-body">
+        <button class="pick" data-pick>Chọn file…</button>
+        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
+        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+      </div>
+    </div>
+    <p class="hint">Update và patch được giải nén vào thư mục <code>&lt;TitleID&gt;-patch</code> cạnh game; shadPS4 tự áp khi chạy. Nếu có nhiều bản, hãy chọn theo thứ tự cũ → mới.</p>
+  </section>
+
+  <section class="card" id="dirs">
+    <h2>2. Thư mục đích</h2>
+    <div class="dir" id="games-row">
+      <label>Thư mục game</label>
+      <div class="slot-body">
+        <button class="pick" id="pick-games">Chọn…</button>
+        <div class="path" id="games-path">Chưa chọn</div>
+      </div>
+    </div>
+    <div class="dir" id="addons-row" hidden>
+      <label>Thư mục addons (cho DLC)</label>
+      <div class="slot-body">
+        <button class="pick" id="pick-addons">Chọn…</button>
+        <div class="path" id="addons-path">Chưa chọn</div>
+      </div>
+    </div>
+    <p class="hint" id="space-hint"></p>
+  </section>
+
+  <section class="card" id="run">
+    <div class="actions">
+      <button id="start" class="primary" disabled>Bắt đầu giải nén</button>
+      <button id="cancel" class="danger" hidden>Hủy</button>
+      <button id="open" hidden>Mở thư mục</button>
+    </div>
+    <div class="progress" id="progress" hidden>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <details id="log-wrap" hidden>
+      <summary>Chi tiết</summary>
+      <pre id="log"></pre>
+    </details>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

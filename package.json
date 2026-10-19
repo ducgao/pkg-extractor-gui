@@ -1,0 +1,51 @@
+{
+  "name": "pkg-extractor-gui",
+  "version": "0.1.0",
+  "description": "GUI for the standalone ShadPs4Plus PKG extractor: base game, update and patch/DLC in one go.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test:ui": "electron . --self-test",
+    "dist": "electron-builder --win portable"
+  },
+  "license": "GPL-2.0-or-later",
+  "private": true,
+  "devDependencies": {
+    "electron": "^44.9.0",
+    "electron-builder": "^26.15.3"
+  },
+  "author": "Dadging Studio",
+  "build": {
+    "appId": "studio.dadging.pkg-extractor-gui",
+    "productName": "PKG Extractor GUI",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/pkg_extractor",
+        "to": "pkg_extractor"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "PKG-Extractor-GUI-${version}-portable.exe"
+    }
+  }
+}

@@ -154,8 +154,9 @@ async function runJob(payload, emit) {
     catch (e) { return send('done', { ok: false, reason: `Không tạo được thư mục "${dir}": ${e.message}` }); }
   }
 
-  const totalWeight = items.reduce((a, i) => a + i.size, 0) || 1;
-  let doneWeight = 0;
+  // Every PKG gets an equal share of the bar (5 files -> 20% each), so a small update
+  // is not drowned out by a 40 GB base game.
+  const share = 1 / items.length;
   let openPath = null;
   let basePath = null;
   current = { child: null, cancelled: false };
@@ -163,7 +164,7 @@ async function runJob(payload, emit) {
 
   for (let idx = 0; idx < items.length; idx++) {
     const item = items[idx];
-    send('item-start', { index: idx, total: items.length, slot: item.slot, name: path.basename(item.file) });
+    send('item-start', { index: idx, total: items.length, slot: item.slot, name: path.basename(item.file), overall: idx * share });
 
     let poll = null;
     const result = await runExtract(payload, item, (line, st) => {
@@ -179,7 +180,7 @@ async function runJob(payload, emit) {
         }, 2000);
       }
       const frac = st.m ? st.n / st.m : 0;
-      send('progress', { overall: (doneWeight + item.size * frac) / totalWeight, n: st.n, m: st.m });
+      send('progress', { overall: (idx + frac) * share, n: st.n, m: st.m });
       if (!/^Extracting file/.test(line)) send('log', { line });
     });
     if (poll) clearInterval(poll);
@@ -189,7 +190,7 @@ async function runJob(payload, emit) {
       current = null;
       return send('done', { ok: false, reason: `${path.basename(item.file)}: ${result.reason}`, tail: result.state.tail });
     }
-    doneWeight += item.size;
+    send('progress', { overall: (idx + 1) * share, n: result.state.m, m: result.state.m });
     if (result.state.dest) {
       openPath = item.kind === 'dlc' ? (openPath || result.state.dest) : result.state.dest;
       if (item.kind === 'base') basePath = result.state.dest;

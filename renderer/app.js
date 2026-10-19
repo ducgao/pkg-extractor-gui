@@ -143,13 +143,34 @@
 
   function setStatus(text, cls = '') { status.textContent = text; status.className = `status ${cls}`; }
 
+  // The bar eases toward the real progress instead of jumping, so slow stretches
+  // (one huge file) still look alive. It never runs ahead of the real value.
+  let target = 0, shown = 0, ticker = null;
+  function paint(p) {
+    fill.style.width = `${(p * 100).toFixed(1)}%`;
+    pct.textContent = `${Math.min(100, Math.floor(p * 100))}%`;
+  }
+  function resetBar() {
+    clearInterval(ticker); ticker = null;
+    target = shown = 0; paint(0);
+  }
+  function setTarget(t, snap = false) {
+    target = Math.min(1, Math.max(target, t));
+    if (snap) { shown = target; paint(shown); return; }
+    if (!ticker) ticker = setInterval(() => {
+      if (shown >= target) return;
+      shown = Math.min(target, shown + Math.max((target - shown) * 0.15, 0.0008));
+      paint(shown);
+    }, 50);
+  }
+
   $('#start').addEventListener('click', async () => {
     state.running = true;
     state.lastOpen = null;
     log.textContent = '';
     $('#log-wrap').hidden = false;
     $('#progress').hidden = false;
-    fill.className = 'fill'; fill.style.width = '0%'; pct.textContent = '0%';
+    fill.className = 'fill'; resetBar();
     $('#open').hidden = true; $('#cancel').hidden = false; $('#cancel').disabled = false;
     setStatus('Đang chuẩn bị…');
     renderAll();
@@ -178,11 +199,11 @@
         $('#cancel').hidden = false;
         itemLabel = `(${ev.index + 1}/${ev.total}) ${ev.name}`;
         lastBytes = '';
+        setTarget(ev.overall || 0);
         setStatus(`Đang giải nén ${itemLabel}`);
         break;
       case 'progress': {
-        const p = Math.min(100, Math.floor(ev.overall * 100));
-        fill.style.width = `${p}%`; pct.textContent = `${p}%`;
+        setTarget(ev.overall);
         setStatus(`Đang giải nén ${itemLabel} — file ${ev.n}/${ev.m}${lastBytes}`);
         break;
       }
@@ -199,12 +220,12 @@
         state.running = false;
         $('#cancel').hidden = true;
         if (ev.ok) {
-          fill.style.width = '100%'; pct.textContent = '100%'; fill.classList.add('done');
+          setTarget(1, true); clearInterval(ticker); ticker = null; fill.classList.add('done');
           state.lastOpen = ev.openPath;
           $('#open').hidden = false;
           setStatus(`Xong sau ${ev.seconds}s. Đã mở thư mục: ${ev.openPath}`, 'ok');
         } else {
-          fill.classList.add('fail');
+          clearInterval(ticker); ticker = null; fill.classList.add('fail');
           setStatus(ev.reason || 'Thất bại.', ev.cancelled ? '' : 'bad');
           if (ev.tail) log.textContent += `--- lỗi, các dòng cuối ---\n${ev.tail.join('\n')}\n`;
         }

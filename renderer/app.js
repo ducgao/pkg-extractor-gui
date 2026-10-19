@@ -169,7 +169,13 @@
 
   window.api.onEvent((ev) => {
     switch (ev.type) {
+      case 'preview': // used only to render documentation screenshots
+        Object.assign(state, ev.state);
+        renderAll();
+        break;
       case 'item-start':
+        $('#progress').hidden = false;
+        $('#cancel').hidden = false;
         itemLabel = `(${ev.index + 1}/${ev.total}) ${ev.name}`;
         lastBytes = '';
         setStatus(`Đang giải nén ${itemLabel}`);

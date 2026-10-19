@@ -255,6 +255,7 @@ async function e2e() {
 async function selfTest() {
   const out = process.env.SELFTEST_PNG;
   await new Promise((r) => setTimeout(r, 600));
+  if (process.env.SELFTEST_H) win.setContentSize(760, +process.env.SELFTEST_H);
   if (process.env.SELFTEST_EVENTS) {
     for (const ev of JSON.parse(process.env.SELFTEST_EVENTS)) win.webContents.send('job-event', ev);
     await new Promise((r) => setTimeout(r, 400));

@@ -10,53 +10,59 @@
 <body>
 <main>
   <header>
-    <h1>PKG Extractor</h1>
-    <p>Giải nén game gốc, update và patch/DLC thành thư mục game cho shadPS4.</p>
+    <div>
+      <h1>PKG Extractor</h1>
+      <p data-i18n="app.subtitle"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="vi" aria-pressed="false">VI</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
   </header>
 
   <section class="card" id="files">
-    <h2>1. Chọn file PKG</h2>
+    <h2 data-i18n="files.title"></h2>
     <div class="slot" data-slot="base">
-      <div class="slot-head"><span class="slot-name">Game gốc</span><span class="badge" data-badge></span></div>
+      <div class="slot-head"><span class="slot-name" data-i18n="slot.base"></span><span class="badge" data-badge></span></div>
       <div class="slot-body">
-        <button class="pick" data-pick>Chọn file…</button>
-        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
-        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+        <button class="pick" data-pick data-i18n="btn.pickFile"></button>
+        <div class="path" data-path></div>
+        <button class="clear" data-clear data-i18n-title="btn.clear" hidden>✕</button>
       </div>
     </div>
     <div class="slot" data-slot="update">
-      <div class="slot-head"><span class="slot-name">Update</span><span class="badge" data-badge></span></div>
+      <div class="slot-head"><span class="slot-name" data-i18n="slot.update"></span><span class="badge" data-badge></span></div>
       <div class="slot-body">
-        <button class="pick" data-pick>Chọn file…</button>
-        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
-        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+        <button class="pick" data-pick data-i18n="btn.pickFile"></button>
+        <div class="path" data-path></div>
+        <button class="clear" data-clear data-i18n-title="btn.clear" hidden>✕</button>
       </div>
     </div>
     <div class="slot" data-slot="extra">
-      <div class="slot-head"><span class="slot-name">Patch / DLC</span><span class="badge" data-badge></span></div>
+      <div class="slot-head"><span class="slot-name" data-i18n="slot.extra"></span><span class="badge" data-badge></span></div>
       <div class="slot-body">
-        <button class="pick" data-pick>Chọn file…</button>
-        <div class="path" data-path>Chưa chọn (kéo thả file .pkg vào đây)</div>
-        <button class="clear" data-clear title="Bỏ chọn" hidden>✕</button>
+        <button class="pick" data-pick data-i18n="btn.pickFile"></button>
+        <div class="path" data-path></div>
+        <button class="clear" data-clear data-i18n-title="btn.clear" hidden>✕</button>
       </div>
     </div>
-    <p class="hint">Update và patch được giải nén vào thư mục <code>&lt;TitleID&gt;-patch</code> cạnh game; shadPS4 tự áp khi chạy. Nếu có nhiều bản, hãy chọn theo thứ tự cũ → mới.</p>
+    <p class="hint" data-i18n-html="files.hint"></p>
   </section>
 
   <section class="card" id="dirs">
-    <h2>2. Thư mục đích</h2>
+    <h2 data-i18n="dirs.title"></h2>
     <div class="dir" id="games-row">
-      <label>Thư mục game</label>
+      <label data-i18n="dirs.games"></label>
       <div class="slot-body">
-        <button class="pick" id="pick-games">Chọn…</button>
-        <div class="path" id="games-path">Chưa chọn</div>
+        <button class="pick" id="pick-games" data-i18n="btn.pickDir"></button>
+        <div class="path" id="games-path"></div>
       </div>
     </div>
     <div class="dir" id="addons-row" hidden>
-      <label>Thư mục addons (cho DLC)</label>
+      <label data-i18n="dirs.addons"></label>
       <div class="slot-body">
-        <button class="pick" id="pick-addons">Chọn…</button>
-        <div class="path" id="addons-path">Chưa chọn</div>
+        <button class="pick" id="pick-addons" data-i18n="btn.pickDir"></button>
+        <div class="path" id="addons-path"></div>
       </div>
     </div>
     <p class="hint" id="space-hint"></p>
@@ -64,9 +70,9 @@
 
   <section class="card" id="run">
     <div class="actions">
-      <button id="start" class="primary" disabled>Bắt đầu giải nén</button>
-      <button id="cancel" class="danger" hidden>Hủy</button>
-      <button id="open" hidden>Mở thư mục</button>
+      <button id="start" class="primary" data-i18n="btn.start" disabled></button>
+      <button id="cancel" class="danger" data-i18n="btn.cancel" hidden></button>
+      <button id="open" data-i18n="btn.open" hidden></button>
     </div>
     <div class="progress" id="progress" hidden>
       <div class="bar"><div class="fill" id="fill"></div></div>
@@ -74,11 +80,12 @@
     </div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
     <details id="log-wrap" hidden>
-      <summary>Chi tiết</summary>
+      <summary data-i18n="log.details"></summary>
       <pre id="log"></pre>
     </details>
   </section>
 </main>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

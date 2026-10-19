@@ -15,14 +15,11 @@ Download `PKG-Extractor-GUI-x.y.z-portable.exe` and double-click it. No installa
 
 ## How to use
 
-> The app interface is currently in Vietnamese. Button labels used below:
-> **Chọn file…** = Choose file, **Game gốc** = Base game, **Thư mục game** = Games folder,
-> **Thư mục addons** = Addons folder, **Bắt đầu giải nén** = Start extracting, **Hủy** = Cancel,
-> **Mở thư mục** = Open folder.
-
 ### 1. Open the app
 
-![Open the app](docs/images/1-open.png)
+Use the **VI / EN** switch in the top-right corner to change the language.
+
+![Open the app](docs/images/en/1-open.png)
 
 ### 2. Pick your files and folders
 
@@ -31,19 +28,19 @@ Download `PKG-Extractor-GUI-x.y.z-portable.exe` and double-click it. No installa
 - Choose the **Games folder** (and the **Addons folder** if you have a DLC). The app remembers your choice.
 - If you have several updates, pick them from oldest to newest.
 
-![Pick files and folders](docs/images/2-select.png)
+![Pick files and folders](docs/images/en/2-select.png)
 
 ### 3. Click Start extracting
 
 The progress bar shows which file is being processed, how much has been written and the speed. Click **Cancel** to stop.
 
-![Extracting](docs/images/3-running.png)
+![Extracting](docs/images/en/3-running.png)
 
 ### 4. Done
 
 The games folder opens automatically. Click **Open folder** to open it again.
 
-![Finished](docs/images/4-done.png)
+![Finished](docs/images/en/4-done.png)
 
 ## Run from source
 

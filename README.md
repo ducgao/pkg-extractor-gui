@@ -17,6 +17,8 @@ Tải file `PKG-Extractor-GUI-x.y.z-portable.exe`, bấm đúp để chạy. Kh�
 
 ### 1. Mở ứng dụng
 
+Đổi ngôn ngữ bằng nút **VI / EN** ở góc trên bên phải.
+
 ![Mở ứng dụng](docs/images/1-open.png)
 
 ### 2. Chọn file và thư mục

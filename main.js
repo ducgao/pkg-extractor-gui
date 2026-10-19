@@ -14,6 +14,9 @@ const KIND_BY_CODE = { 101: 'base', 102: 'update', 103: 'dlc' };
 const SLOT_RULES = { base: ['base'], update: ['update'], extra: ['update', 'dlc'] };
 const SLOT_ORDER = ['base', 'update', 'extra'];
 
+// Software rendering for the headless screenshot mode; the GPU process can be flaky there.
+if (process.argv.includes('--self-test')) app.disableHardwareAcceleration();
+
 let win = null;
 let current = null; // running job: { child, cancelled }
 
@@ -26,18 +29,21 @@ function saveSettings(s) {
 }
 
 function createWindow() {
+  const shotMode = process.argv.includes('--self-test');
   win = new BrowserWindow({
+    show: !shotMode,
     width: 760,
     height: 780,
     minWidth: 620,
     minHeight: 640,
-    backgroundColor: '#14161a',
+    backgroundColor: '#f3f5f8',
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
+      offscreen: shotMode,
     },
   });
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
@@ -117,14 +123,14 @@ function runExtract(job, item, onLine) {
     };
     child.stdout.on('data', feed);
     child.stderr.on('data', feed);
-    child.on('error', (e) => resolve({ ok: false, reason: `Không chạy được pkg_extractor: ${e.message}`, state }));
+    child.on('error', (e) => resolve({ ok: false, reason: { key: 'err.spawn', p: { msg: e.message } }, state }));
     child.on('close', (code) => {
       if (buf) handle(buf);
       // The extractor returns 0 even on failure, so verify via its own output.
       const complete = state.sawEnd && state.m > 0 && state.n === state.m;
       if (current.cancelled) resolve({ ok: false, cancelled: true, state });
-      else if (code !== 0) resolve({ ok: false, reason: `pkg_extractor thoát với mã ${code}.`, state });
-      else if (!complete) resolve({ ok: false, reason: 'Giải nén không hoàn tất (thiếu file hoặc không thấy dòng kết thúc).', state });
+      else if (code !== 0) resolve({ ok: false, reason: { key: 'err.exit', p: { code } }, state });
+      else if (!complete) resolve({ ok: false, reason: { key: 'err.incomplete' }, state });
       else resolve({ ok: true, state });
     });
   });
@@ -141,17 +147,17 @@ async function runJob(payload, emit) {
     if (!file) continue;
     const info = await checkType(file);
     if (!info.kind || !SLOT_RULES[slot].includes(info.kind)) {
-      return send('done', { ok: false, reason: `File "${path.basename(file)}" không hợp lệ cho mục ${slot}.` });
+      return send('done', { ok: false, reason: { key: 'err.badslot', p: { name: path.basename(file), slot } } });
     }
     items.push({ slot, file, kind: info.kind, size: info.size, destRoot: info.kind === 'dlc' ? addonsDir : gamesDir });
   }
-  if (!items.length) return send('done', { ok: false, reason: 'Chưa chọn file nào.' });
-  if (!gamesDir) return send('done', { ok: false, reason: 'Chưa chọn thư mục game.' });
-  if (items.some((i) => i.kind === 'dlc') && !addonsDir) return send('done', { ok: false, reason: 'Có DLC nhưng chưa chọn thư mục addons.' });
+  if (!items.length) return send('done', { ok: false, reason: { key: 'err.nofile' } });
+  if (!gamesDir) return send('done', { ok: false, reason: { key: 'err.nogames' } });
+  if (items.some((i) => i.kind === 'dlc') && !addonsDir) return send('done', { ok: false, reason: { key: 'err.noaddons' } });
 
   for (const dir of new Set(items.map((i) => i.destRoot))) {
     try { fs.mkdirSync(dir, { recursive: true }); }
-    catch (e) { return send('done', { ok: false, reason: `Không tạo được thư mục "${dir}": ${e.message}` }); }
+    catch (e) { return send('done', { ok: false, reason: { key: 'err.mkdir', p: { dir, msg: e.message } } }); }
   }
 
   // Every PKG gets an equal share of the bar (5 files -> 20% each), so a small update
@@ -185,10 +191,10 @@ async function runJob(payload, emit) {
     });
     if (poll) clearInterval(poll);
 
-    if (result.cancelled) { current = null; return send('done', { ok: false, cancelled: true, reason: 'Đã hủy.' }); }
+    if (result.cancelled) { current = null; return send('done', { ok: false, cancelled: true, reason: { key: 'cancelled' } }); }
     if (!result.ok) {
       current = null;
-      return send('done', { ok: false, reason: `${path.basename(item.file)}: ${result.reason}`, tail: result.state.tail });
+      return send('done', { ok: false, reason: result.reason, name: path.basename(item.file), tail: result.state.tail });
     }
     send('progress', { overall: (idx + 1) * share, n: result.state.m, m: result.state.m });
     if (result.state.dest) {
@@ -219,7 +225,7 @@ ipcMain.handle('fs:free', (_e, dir) => freeBytes(dir));
 ipcMain.handle('shell:open', (_e, p) => shell.openPath(p));
 ipcMain.handle('job:start', (_e, payload) => {
   if (current) return false;
-  runJob(payload).catch((e) => { current = null; if (win) win.webContents.send('job-event', { type: 'done', ok: false, reason: String(e && e.message || e) }); });
+  runJob(payload).catch((e) => { current = null; if (win) win.webContents.send('job-event', { type: 'done', ok: false, reason: { key: 'err.generic', p: { msg: String(e && e.message || e) } } }); });
   return true;
 });
 ipcMain.handle('job:cancel', () => {
@@ -259,11 +265,15 @@ async function selfTest() {
   if (process.env.SELFTEST_H) win.setContentSize(760, +process.env.SELFTEST_H);
   if (process.env.SELFTEST_EVENTS) {
     for (const ev of JSON.parse(process.env.SELFTEST_EVENTS)) win.webContents.send('job-event', ev);
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 1800)); // let the progress bar finish easing
   }
-  if (out) {
-    const img = await win.webContents.capturePage();
-    fs.writeFileSync(out, img.toPNG());
+  try {
+    if (out) {
+      const img = await win.webContents.capturePage();
+      fs.writeFileSync(out, img.toPNG());
+    }
+  } catch (e) {
+    console.error('capture failed:', e.message);
   }
   app.quit();
 }

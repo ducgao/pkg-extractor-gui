@@ -1,5 +1,7 @@
 # PKG Extractor GUI
 
+🌐 [English](README.en.md) · **Tiếng Việt**
+
 Giải nén file PKG game PS4 (game gốc, update, patch/DLC) thành thư mục game để dùng với shadPS4, chỉ bằng vài cú bấm.
 
 ## Tải về
@@ -37,11 +39,6 @@ Thanh tiến độ cho biết đang xử lý file nào, đã ghi bao nhiêu và 
 Thư mục game tự mở ra. Bấm **Mở thư mục** nếu muốn mở lại.
 
 ![Hoàn tất](docs/images/4-done.png)
-
-## Lưu ý
-
-- Ứng dụng chỉ giải nén. Để chơi game vẫn cần [shadPS4](https://github.com/shadps4-emu/shadPS4) và firmware dump từ máy PS4 của chính bạn.
-- Dung lượng sau giải nén thường lớn hơn file PKG. Hãy chắc chắn ổ đích còn đủ chỗ.
 
 ## Chạy từ mã nguồn
 

@@ -58,3 +58,9 @@ GPL-2.0-or-later, xem [LICENSE](LICENSE).
 Dự án đóng gói sẵn `pkg_extractor` (bản `PKG_EXTRACTOR_1_1`) từ [ShadPs4Plus](https://github.com/AzaharPlus/shadPS4Plus),
 dựa trên mã của [shadPS4](https://github.com/shadps4-emu/shadPS4). Mã nguồn của chúng nằm ở các repo trên;
 bản build và license đi kèm nằm trong `vendor/pkg_extractor`.
+
+## Ủng hộ
+
+Nếu ứng dụng hữu ích với bạn, bạn có thể ủng hộ tác giả qua MoMo (quét mã QR bằng ứng dụng ngân hàng hoặc MoMo):
+
+<img src="docs/images/donate-qr.jpg" alt="QR MoMo" width="260">

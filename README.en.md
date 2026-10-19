@@ -58,3 +58,9 @@ GPL-2.0-or-later, see [LICENSE](LICENSE).
 This project bundles `pkg_extractor` (build `PKG_EXTRACTOR_1_1`) from [ShadPs4Plus](https://github.com/AzaharPlus/shadPS4Plus),
 which is based on code from [shadPS4](https://github.com/shadps4-emu/shadPS4). Their source code is available in the repositories above;
 the bundled build and its license are in `vendor/pkg_extractor`.
+
+## Donate
+
+If this app is useful to you, you can support the author via PayPal:
+
+**[paypal.me/ducgao4213](https://paypal.me/ducgao4213)**
